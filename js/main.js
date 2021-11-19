@@ -11,7 +11,7 @@ function draw() {
     draw_grid_lines(ctx);
 
     // draw paths
-    draw_way_points(ctx);
+    draw_waypoints(ctx);
     draw_paths(ctx);
 
     requestAnimationFrame(draw);
@@ -57,7 +57,7 @@ function init() {
         if (e.button === 0) {
             state.path_finding.start = camera_to_grid(e.clientX, e.clientY);
 
-            if (e.ctrlKey) state.path_finding.way_points = [];
+            if (e.ctrlKey) state.path_finding.waypoints = [];
         } else if (e.button === 2) {
             let { x, y } = camera_to_grid(e.clientX, e.clientY);
             state.filling = !state.grid.cells[x][y];
@@ -75,12 +75,12 @@ function init() {
                 if (x !== prev_end_x || y !== prev_end_y) {
                     state.path_finding.end = { x, y };
 
-                    // add new way point if distance to previous way point is greater than 0
+                    // add new waypoint if distance to previous waypoint is greater than 0
                     if (
-                        state.path_finding.way_points.length === 0 ||
-                        manhattan_distance({ x, y }, state.path_finding.way_points.at(-1)) > 2
+                        state.path_finding.waypoints.length === 0 ||
+                        manhattan_distance({ x, y }, state.path_finding.waypoints.at(-1)) > 2
                     )
-                        state.path_finding.way_points.push({ x, y });
+                        state.path_finding.waypoints.push({ x, y });
 
                     state.path_finding.paths = trigger_pathfinding();
                 }

@@ -20,10 +20,10 @@ let state = {
     path_finding: {
         start: { x: 0, y: 0 },
         end: { x: 0, y: 0 },
-        way_points: [],
+        waypoints: [],
         promise: null,
         paths: [],
-        way_point_color: "rgba(0, 0, 0, 0.5)",
+        waypoint_color: "rgba(0, 0, 0, 0.5)",
         path_colors: [
             "hsla(0, 100%, 50%, .5)",
             "hsla(108, 100%, 50%, .5)",
@@ -292,8 +292,8 @@ function draw_paths(ctx) {
     ctx.stroke();
 }
 
-function draw_way_points(ctx) {
-    draw_cells(ctx, state.path_finding.way_points, state.path_finding.way_point_color);
+function draw_waypoints(ctx) {
+    draw_cells(ctx, state.path_finding.waypoints, state.path_finding.waypoint_color);
 }
 
 function fill_cells() {
@@ -326,7 +326,7 @@ function path_find(heuristics) {
     // cannot move diagonally
     // walls are stored in state.grid.cells
     let grid_state = []; // grid_state[x][y] = { x, y, g, h, f, w, parent, open }
-    // w is the distance to closest way point
+    // w is the distance to closest waypoint
     for (let i = 0; i < state.grid.width; i += 1) grid_state[i] = [];
     grid_state[state.path_finding.start.x][state.path_finding.start.y] = {
         x: state.path_finding.start.x,
@@ -344,8 +344,8 @@ function path_find(heuristics) {
     // open_set[i] = grid_state[x][y]
     let open_set = [grid_state[state.path_finding.start.x][state.path_finding.start.y]];
 
-    // copy way points
-    let way_points = [...state.path_finding.way_points];
+    // copy waypoints
+    let waypoints = [...state.path_finding.waypoints];
 
     // using d3 bisector to keep the open set sorted
     // comparator should value f more than w
@@ -398,10 +398,10 @@ function path_find(heuristics) {
             let f = g + h;
             let w = Infinity;
             if (heuristics.secondary) {
-                // calculate distance to closest way point
-                // and index of closest way point
-                let index = way_points.reduce((best_index, way_point, index) => {
-                    let distance = heuristics.secondary(way_point, neighbor);
+                // calculate distance to closest waypoint
+                // and index of closest waypoint
+                let index = waypoints.reduce((best_index, waypoint, index) => {
+                    let distance = heuristics.secondary(waypoint, neighbor);
 
                     if (distance < w) {
                         w = distance;
@@ -411,8 +411,8 @@ function path_find(heuristics) {
                     return best_index;
                 }, -1);
 
-                // cut way points until closest way point
-                way_points.splice(0, index);
+                // cut waypoints until closest waypoint
+                waypoints.splice(0, index);
             }
             grid_state[x][y] = { x, y, g, f, h, w, parent: current, open: true };
             let index = bisector(open_set, { f, w });
